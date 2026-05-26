@@ -1,4 +1,5 @@
 import Foundation
+import Darwin
 
 // SMCReader handles reading system statistics like CPU temperature and load.
 class SMCReader {
@@ -15,7 +16,7 @@ class SMCReader {
         task.launch()
         task.waitUntilExit()
         
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let data = (try? pipe.fileHandleForReading.readDataToEndOfFile()) ?? Data()
         if let output = String(data: data, encoding: .utf8) {
             // Look for "CPU die temperature: 56.43 C" or similar
             let pattern = "CPU die temperature: ([0-9.]+) C"
@@ -66,7 +67,7 @@ class SMCReader {
         task.launch()
         task.waitUntilExit()
         
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        let data = (try? pipe.fileHandleForReading.readDataToEndOfFile()) ?? Data()
         if let output = String(data: data, encoding: .utf8) {
             return output.contains("Battery Power")
         }
