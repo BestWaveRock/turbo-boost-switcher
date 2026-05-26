@@ -17,13 +17,13 @@ jobs:
       run: brew install xcodegen
 
     - name: Generate Xcode Project
-      run: xcodegen generate
+      run: xcodegen generate --spec project.yml
 
     - name: Build App
-      run: xcodebuild -project TurboBoostSwitcher.xcodeproj -scheme TurboBoostSwitcher -configuration Release clean build CONFIGURATION_BUILD_DIR=build
+      run: xcodebuild -project TurboBoostSwitcher.xcodeproj -scheme TurboBoostSwitcher -configuration Release clean build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS="" CODE_SIGNING_IDENTITY="" AD_HOC_CODE_SIGNING_ALLOWED=YES CONFIGURATION_BUILD_DIR=build
 
     - name: Build Daemon
-      run: xcodebuild -project TurboBoostSwitcher.xcodeproj -scheme TurboBoostDaemon -configuration Release build CONFIGURATION_BUILD_DIR=build
+      run: xcodebuild -project TurboBoostSwitcher.xcodeproj -scheme TurboBoostDaemon -configuration Release build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS="" CODE_SIGNING_IDENTITY="" AD_HOC_CODE_SIGNING_ALLOWED=YES CONFIGURATION_BUILD_DIR=build
 
     - name: Package
       run: |
