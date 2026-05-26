@@ -32,3 +32,4 @@ This is an open-source clone of the Turbo Boost Switcher Pro feature set, create
 
 ## License
 MIT License
+Build status: fixing
