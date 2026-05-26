@@ -3,12 +3,14 @@
 This is an open-source clone of the Turbo Boost Switcher Pro feature set, created for testing and demonstration purposes. It includes a modern SwiftUI Menu Bar App, a Swift-based privileged Daemon running via LaunchDaemon, and a complete auto-mode engine.
 
 ## Features (Pro)
-- **Menu Bar App**: A lightweight SwiftUI menu bar extra.
-- **Root Daemon**: A background service that runs as root to monitor and modify system states without repeated password prompts.
+- **Menu Bar App**: A lightweight SwiftUI menu bar extra with real-time stats.
+- **Root Daemon**: A background service that runs as root to monitor and modify system states.
 - **Auto Modes**:
-  - **Temperature Mode**: Automatically disable Turbo Boost when CPU temperature exceeds limits.
-  - **Battery Mode**: Automatically disable Turbo Boost when running on battery to save power.
-  - **CPU Mode / Apps Mode**: (Engine scaffolded)
+  - **Temperature Mode**: Automatically disable Turbo Boost when CPU temperature exceeds 75°C.
+  - **Battery Mode**: Automatically disable Turbo Boost when running on battery.
+  - **CPU Load Mode**: Automatically disable Turbo Boost when CPU load exceeds 80%.
+  - **Apps Mode**: Automatically disable Turbo Boost when high-power apps (Xcode, Docker, etc.) are running.
+- **Real-time Monitoring**: Displays CPU temperature and load in the menu bar.
 - **CI/CD Built-in**: Includes a GitHub Actions pipeline to compile the App, compile the Daemon, and package them together.
 
 ## How to Install and Test

@@ -14,6 +14,7 @@ struct TurboBoostSwitcherApp: App {
 class AppState: ObservableObject {
     @Published var isTurboBoostEnabled: Bool = true
     @Published var temperature: Float = 0.0
+    @Published var cpuLoad: Float = 0.0
     @Published var autoMode: String = "Manual"
     @Published var daemonStatus: String = "Connecting..."
     
@@ -32,10 +33,11 @@ class AppState: ObservableObject {
     }
 
     func fetchStatus() {
-        daemonManager.getStatus { [weak self] enabled, temp, autoMode in
+        daemonManager.getStatus { [weak self] enabled, temp, load, autoMode in
             DispatchQueue.main.async {
                 self?.isTurboBoostEnabled = enabled
                 self?.temperature = temp
+                self?.cpuLoad = load
                 self?.autoMode = autoMode
                 self?.daemonStatus = "Connected"
             }

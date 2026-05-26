@@ -18,9 +18,10 @@ class DaemonIPCDelegate: NSObject, TurboBoostDaemonProtocol {
         self.engine = engine
     }
 
-    func getStatus(with reply: @escaping (Bool, Float, String) -> Void) {
+    func getStatus(with reply: @escaping (Bool, Float, Float, String) -> Void) {
         let temp = SMCReader.shared.getCPUTemperature()
-        reply(engine.isTurboBoostEnabled, temp, engine.currentAutoMode)
+        let load = SMCReader.shared.getCPULoad()
+        reply(engine.isTurboBoostEnabled, temp, load, engine.currentAutoMode)
     }
 
     func setTurboBoost(enabled: Bool, with reply: @escaping (Bool) -> Void) {

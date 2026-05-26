@@ -24,11 +24,11 @@ class DaemonManager {
         return conn
     }
 
-    func getStatus(completion: @escaping (Bool, Float, String) -> Void) {
+    func getStatus(completion: @escaping (Bool, Float, Float, String) -> Void) {
         let conn = getConnection()
         let proxy = conn.remoteObjectProxyWithErrorHandler { error in
             print("Failed to connect to daemon: \(error)")
-            completion(false, 0.0, "Disconnected")
+            completion(false, 0.0, 0.0, "Disconnected")
         } as? TurboBoostDaemonProtocol
         
         proxy?.getStatus(with: completion)

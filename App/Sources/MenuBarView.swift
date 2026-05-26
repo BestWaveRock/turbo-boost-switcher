@@ -7,6 +7,7 @@ struct MenuBarView: View {
         VStack(alignment: .leading) {
             Text("Turbo Boost: \(state.isTurboBoostEnabled ? "Enabled" : "Disabled")")
             Text("CPU Temp: \(String(format: "%.1f", state.temperature)) °C")
+            Text("CPU Load: \(String(format: "%.1f", state.cpuLoad * 100)) %")
             Text("Daemon: \(state.daemonStatus)")
             Text("Current Mode: \(state.autoMode)")
 
@@ -25,6 +26,7 @@ struct MenuBarView: View {
                 Button("CPU Load") { state.setAutoMode("CPU") }
                 Button("Temperature") { state.setAutoMode("Temperature") }
                 Button("Battery") { state.setAutoMode("Battery") }
+                Button("Apps") { state.setAutoMode("Apps") }
             }
 
             Divider()
