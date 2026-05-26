@@ -62,19 +62,21 @@ class AutoModeEngine {
     private func checkHighPowerApps() -> Bool {
         // Simple mock for now, checking for common high-power apps
         let highPowerApps = ["Final Cut Pro", "Logic Pro", "Xcode", "Simulator", "Docker", "Render"]
-        let task = Process()
-        task.launchPath = "/usr/bin/pgrep"
         
         for app in highPowerApps {
             let p = Process()
-            p.launchPath = "/usr/bin/pgrep"
+            p.executableURL = URL(fileURLWithPath: "/usr/bin/pgrep")
             p.arguments = ["-i", app]
             let pipe = Pipe()
             p.standardOutput = pipe
-            p.launch()
-            p.waitUntilExit()
-            if p.terminationStatus == 0 {
-                return true
+            do {
+                try p.run()
+                p.waitUntilExit()
+                if p.terminationStatus == 0 {
+                    return true
+                }
+            } catch {
+                print("Error running pgrep: \(error)")
             }
         }
         return false
@@ -91,10 +93,14 @@ class AutoModeEngine {
         // Mock execution via shell
         let script = enabled ? "echo 'Turbo Boost Enabled'" : "echo 'Turbo Boost Disabled'"
         let task = Process()
-        task.launchPath = "/bin/bash"
+        task.executableURL = URL(fileURLWithPath: "/bin/bash")
         task.arguments = ["-c", script]
-        task.launch()
-        task.waitUntilExit()
+        do {
+            try task.run()
+            task.waitUntilExit()
+        } catch {
+            print("Error executing shell script: \(error)")
+        }
     }
 
     func setAutoMode(mode: String) {

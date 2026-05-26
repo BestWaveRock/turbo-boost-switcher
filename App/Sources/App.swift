@@ -8,6 +8,7 @@ struct TurboBoostSwitcherApp: App {
         MenuBarExtra("Turbo Boost", systemImage: state.isTurboBoostEnabled ? "bolt.fill" : "bolt.slash.fill") {
             MenuBarView(state: state)
         }
+        .menuBarExtraStyle(.window)
     }
 }
 

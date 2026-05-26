@@ -7,26 +7,29 @@ class SMCReader {
 
     func getCPUTemperature() -> Float {
         let task = Process()
-        task.launchPath = "/usr/bin/powermetrics"
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/powermetrics")
         task.arguments = ["-n", "1", "--samplers", "smc"]
         let pipe = Pipe()
         task.standardOutput = pipe
         
-        // powermetrics requires root, which our daemon has.
-        task.launch()
-        task.waitUntilExit()
-        
-        let data = (try? pipe.fileHandleForReading.readDataToEndOfFile()) ?? Data()
-        if let output = String(data: data, encoding: .utf8) {
-            // Look for "CPU die temperature: 56.43 C" or similar
-            let pattern = "CPU die temperature: ([0-9.]+) C"
-            if let regex = try? NSRegularExpression(pattern: pattern),
-               let match = regex.firstMatch(in: output, range: NSRange(output.startIndex..., in: output)) {
-                if let range = Range(match.range(at: 1), in: output),
-                   let temp = Float(output[range]) {
-                    return temp
+        do {
+            try task.run()
+            task.waitUntilExit()
+            
+            if let data = try pipe.fileHandleForReading.readToEnd(),
+               let output = String(data: data, encoding: .utf8) {
+                // Look for "CPU die temperature: 56.43 C" or similar
+                let pattern = "CPU die temperature: ([0-9.]+) C"
+                if let regex = try? NSRegularExpression(pattern: pattern),
+                   let match = regex.firstMatch(in: output, range: NSRange(output.startIndex..., in: output)) {
+                    if let range = Range(match.range(at: 1), in: output),
+                       let temp = Float(output[range]) {
+                        return temp
+                    }
                 }
             }
+        } catch {
+            print("Error running powermetrics: \(error)")
         }
         
         // Fallback if powermetrics fails or output format is different
@@ -60,16 +63,21 @@ class SMCReader {
 
     func isOnBattery() -> Bool {
         let task = Process()
-        task.launchPath = "/usr/bin/pmset"
+        task.executableURL = URL(fileURLWithPath: "/usr/bin/pmset")
         task.arguments = ["-g", "batt"]
         let pipe = Pipe()
         task.standardOutput = pipe
-        task.launch()
-        task.waitUntilExit()
         
-        let data = (try? pipe.fileHandleForReading.readDataToEndOfFile()) ?? Data()
-        if let output = String(data: data, encoding: .utf8) {
-            return output.contains("Battery Power")
+        do {
+            try task.run()
+            task.waitUntilExit()
+            
+            if let data = try pipe.fileHandleForReading.readToEnd(),
+               let output = String(data: data, encoding: .utf8) {
+                return output.contains("Battery Power")
+            }
+        } catch {
+            print("Error running pmset: \(error)")
         }
         return false
     }

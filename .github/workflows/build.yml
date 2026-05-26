@@ -14,22 +14,47 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install XcodeGen
-      run: brew install xcodegen
+      run: |
+        if ! command -v xcodegen &> /dev/null; then
+          brew install xcodegen
+        else
+          echo "XcodeGen already installed"
+        fi
 
     - name: Generate Xcode Project
       run: xcodegen generate --spec project.yml
 
     - name: Build App
-      run: xcodebuild -project TurboBoostSwitcher.xcodeproj -scheme TurboBoostSwitcher -configuration Release clean build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS="" CODE_SIGNING_IDENTITY="" AD_HOC_CODE_SIGNING_ALLOWED=YES CONFIGURATION_BUILD_DIR=build
+      run: |
+        xcodebuild -project TurboBoostSwitcher.xcodeproj -scheme TurboBoostSwitcher -configuration Release clean build \
+          CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS="" CODE_SIGNING_IDENTITY="" \
+          AD_HOC_CODE_SIGNING_ALLOWED=YES CONFIGURATION_BUILD_DIR=build
 
     - name: Build Daemon
-      run: xcodebuild -project TurboBoostSwitcher.xcodeproj -scheme TurboBoostDaemon -configuration Release build CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS="" CODE_SIGNING_IDENTITY="" AD_HOC_CODE_SIGNING_ALLOWED=YES CONFIGURATION_BUILD_DIR=build
+      run: |
+        xcodebuild -project TurboBoostSwitcher.xcodeproj -scheme TurboBoostDaemon -configuration Release build \
+          CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS="" CODE_SIGNING_IDENTITY="" \
+          AD_HOC_CODE_SIGNING_ALLOWED=YES CONFIGURATION_BUILD_DIR=build
 
     - name: Package
       run: |
-        mkdir release
-        cp -r build/TurboBoostSwitcher.app release/
-        cp build/TurboBoostDaemon release/
+        mkdir -p release
+        if [ -d "build/TurboBoostSwitcher.app" ]; then
+          cp -r build/TurboBoostSwitcher.app release/
+        else
+          echo "App not found in build/TurboBoostSwitcher.app"
+          find build -name "*.app"
+          exit 1
+        fi
+        
+        if [ -f "build/TurboBoostDaemon" ]; then
+          cp build/TurboBoostDaemon release/
+        else
+          echo "Daemon not found in build/TurboBoostDaemon"
+          find build -name "TurboBoostDaemon"
+          exit 1
+        fi
+        
         cp Scripts/install_daemon.sh release/
         cp Daemon/LaunchDaemon.plist release/
         cd release
