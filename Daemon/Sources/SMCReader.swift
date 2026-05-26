@@ -1,5 +1,6 @@
 import Foundation
 
+// SMCReader handles reading system statistics like CPU temperature and load.
 class SMCReader {
     static let shared = SMCReader()
 
