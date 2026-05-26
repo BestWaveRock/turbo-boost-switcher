@@ -10,6 +10,8 @@ targets:
       - path: App/Sources
       - path: Shared
     settings:
+      GENERATE_INFOPLIST_FILE: YES
+      INFOPLIST_FILE: ""
       INFOPLIST_KEY_LSUIElement: YES
       PRODUCT_BUNDLE_IDENTIFIER: com.bestwaverock.TurboBoostSwitcher
       MARKETING_VERSION: 1.0
