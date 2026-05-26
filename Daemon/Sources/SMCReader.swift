@@ -51,7 +51,7 @@ class SMCReader {
         let nice = Float(cpuLoadInfo.cpu_ticks.3)
         
         let total = user + system + idle + nice
-        if total == 0 { return 0.0 }
+        if total <= 0 { return 0.0 }
         
         return (user + system + nice) / total
     }
