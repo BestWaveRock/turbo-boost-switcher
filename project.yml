@@ -1,0 +1,22 @@
+name: TurboBoostSwitcher
+options:
+  bundleIdPrefix: com.bestwaverock
+targets:
+  TurboBoostSwitcher:
+    type: application
+    platform: macOS
+    deploymentTarget: "13.0"
+    sources:
+      - path: App/Sources
+      - path: Shared
+    info:
+      path: App/Info.plist
+      properties:
+        LSUIElement: true
+  TurboBoostDaemon:
+    type: command-line-tool
+    platform: macOS
+    deploymentTarget: "13.0"
+    sources:
+      - path: Daemon/Sources
+      - path: Shared

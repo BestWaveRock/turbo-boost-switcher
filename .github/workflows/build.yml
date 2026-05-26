@@ -1,0 +1,43 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install XcodeGen
+      run: brew install xcodegen
+
+    - name: Generate Xcode Project
+      run: xcodegen generate
+
+    - name: Build App
+      run: xcodebuild -project TurboBoostSwitcher.xcodeproj -scheme TurboBoostSwitcher -configuration Release clean build CONFIGURATION_BUILD_DIR=build
+
+    - name: Build Daemon
+      run: xcodebuild -project TurboBoostSwitcher.xcodeproj -scheme TurboBoostDaemon -configuration Release build CONFIGURATION_BUILD_DIR=build
+
+    - name: Package
+      run: |
+        mkdir release
+        cp -r build/TurboBoostSwitcher.app release/
+        cp build/TurboBoostDaemon release/
+        cp Scripts/install_daemon.sh release/
+        cp Daemon/LaunchDaemon.plist release/
+        cd release
+        zip -r ../TurboBoostSwitcherRelease.zip .
+        cd ..
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: TurboBoostSwitcher-Release
+        path: TurboBoostSwitcherRelease.zip
